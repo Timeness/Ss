@@ -3,80 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Continuous Tap Detection</title>
-    <link href="https://fonts.googleapis.com/css2?family=Signika:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Tap Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Signika:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Signika', sans-serif;
+            background: #222222;
+            color: white;
             text-align: center;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
-        #toast {
-            visibility: hidden;
-            min-width: 250px;
-            background: #333;
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .game-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 300px;
+            height: 300px;
+            background-color: #333;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+        }
+
+        .hugeicons--face-id::after {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            vertical-align: -0.125em;
+            content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M2.5 8.187c.104-2.1.415-3.41 1.347-4.34c.93-.932 2.24-1.243 4.34-1.347M21.5 8.187c-.104-2.1-.415-3.41-1.347-4.34c-.93-.932-2.24-1.243-4.34-1.347m0 19c2.1-.104 3.41-.415 4.34-1.347c.932-.93 1.243-2.24 1.347-4.34M8.187 21.5c-2.1-.104-3.41-.415-4.34-1.347c-.932-.93-1.243-2.24-1.347-4.34M17.5 17l-.202-.849a2 2 0 0 0-1.392-1.458l-2.406-.694v-1.467c.896-.605 1.5-1.736 1.5-3.032C15 7.567 13.656 6 12 6c-1.657 0-3 1.567-3 3.5c0 1.296.603 2.427 1.5 3.032v1.467l-2.391.7a2 2 0 0 0-1.371 1.406L6.5 17' color='%23fff'/%3E%3C/svg%3E");
+        }
+
+        .points-section {
+            font-size: 1.5rem;
+            margin-top: 20px;
+        }
+
+        .toast {
+            background-color: rgba(0, 0, 0, 0.7);
             color: #fff;
-            text-align: center;
-            border-radius: 5px;
-            padding: 16px;
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 16px;
-            z-index: 1000;
-        }
-        #toast.show {
-            visibility: visible;
-            animation: fadeInOut 3s;
-        }
-        @keyframes fadeInOut {
-            0%, 100% { opacity: 0; }
-            10%, 90% { opacity: 1; }
+            border-radius: 4px;
+            padding: 10px 20px;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1rem;
+            display: none;
         }
     </style>
 </head>
 <body>
+    <h1>Tap Game</h1>
 
-    <h1>Tap Continuously to Trigger Notification</h1>
-    <p>Tap on the screen multiple times to see a toast notification.</p>
+    <div class="game-container" id="game-container">
+        <div class="hugeicons--face-id"></div>
+    </div>
 
-    <div id="toast">Continuous Tap Detected!</div>
+    <div class="points-section" id="points-section">Points: 0</div>
+
+    <div class="toast" id="toast">+1 Point!</div>
 
     <script>
-        let tapCount = 0;
-        let lastTapTime = 0;
-        const tapThreshold = 3; // Number of taps
-        const timeWindow = 2000; // Time window in milliseconds (2 seconds)
+        let points = 0;
+        const pointsSection = document.getElementById("points-section");
+        const toast = document.getElementById("toast");
+        const gameContainer = document.getElementById("game-container");
 
-        document.body.addEventListener("click", () => {
-            const currentTime = new Date().getTime();
+        gameContainer.addEventListener("click", () => {
+            points++;
+            pointsSection.textContent = "Points: " + points;
 
-            if (currentTime - lastTapTime <= timeWindow) {
-                tapCount++;
-            } else {
-                tapCount = 1; // Reset tap count after time window
-            }
-
-            if (tapCount >= tapThreshold) {
-                showToast("Continuous taps detected!");
-                tapCount = 0; // Reset after toast
-            }
-
-            lastTapTime = currentTime;
-        });
-
-        function showToast(message) {
-            let toast = document.getElementById("toast");
-            toast.textContent = message;
-            toast.classList.add("show");
+            toast.style.display = "block";
             setTimeout(() => {
-                toast.classList.remove("show");
-            }, 3000);
-        }
+                toast.style.display = "none";
+            }, 1000);
+        });
     </script>
-
 </body>
 </html>
