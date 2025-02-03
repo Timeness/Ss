@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Screenshot Detection Test</title>
+    <title>Continuous Tap Detection</title>
     <link href="https://fonts.googleapis.com/css2?family=Signika:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -40,28 +40,32 @@
 </head>
 <body>
 
-    <h1>Screenshot Detection Test</h1>
-    <p>Try using a three-finger swipe down or exiting fullscreen mode.</p>
+    <h1>Tap Continuously to Trigger Notification</h1>
+    <p>Tap on the screen multiple times to see a toast notification.</p>
 
-    <div id="toast"></div>
+    <div id="toast">Continuous Tap Detected!</div>
 
     <script>
-        let touchCount = 0;
+        let tapCount = 0;
+        let lastTapTime = 0;
+        const tapThreshold = 3; // Number of taps
+        const timeWindow = 2000; // Time window in milliseconds (2 seconds)
 
-        window.addEventListener("touchstart", (e) => {
-            touchCount = e.touches.length;
-        });
+        document.body.addEventListener("click", () => {
+            const currentTime = new Date().getTime();
 
-        window.addEventListener("touchend", () => {
-            if (touchCount >= 3) {
-                showToast("Three-finger swipe detected!");
+            if (currentTime - lastTapTime <= timeWindow) {
+                tapCount++;
+            } else {
+                tapCount = 1; // Reset tap count after time window
             }
-        });
 
-        document.addEventListener("fullscreenchange", () => {
-            if (!document.fullscreenElement) {
-                showToast("Exited fullscreen! Possible screenshot.");
+            if (tapCount >= tapThreshold) {
+                showToast("Continuous taps detected!");
+                tapCount = 0; // Reset after toast
             }
+
+            lastTapTime = currentTime;
         });
 
         function showToast(message) {
